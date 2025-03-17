@@ -73,6 +73,9 @@ html, body {
   -o-object-fit: cover;
      object-fit: cover;
   width: auto; }
+.img-thumbnail{
+  background-color: black !important;
+}
 
 
   @keyframes gradientAnimation {
