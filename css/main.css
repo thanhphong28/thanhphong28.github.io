@@ -83,7 +83,7 @@ html, body {
   }
 
   .progress-bar {
-    background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
+    background: linear-gradient(90deg, #009dff, #006aff, #3300ff, #00d9ff, #009dff);
     background-size: 200% 100%;
     animation: gradientAnimation 8s linear infinite;
   }
