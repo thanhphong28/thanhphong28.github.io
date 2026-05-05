@@ -46,9 +46,13 @@ if (sceneRoot && canvas) {
 
   let mixer = null;
   let rigModel = null;
+  let rigShell = null;
   let proceduralRig = null;
   let fallbackObjects = [];
   let fallbackState = null;
+  let nextBlinkAt = 0.9 + Math.random() * 1.8;
+  let blinkProgress = 1;
+  let blinkDuration = 0.09;
 
   function buildAvatarMaps(image) {
     const width = image.width;
@@ -122,92 +126,207 @@ if (sceneRoot && canvas) {
         avatarMaps.alphaTexture.anisotropy = 8;
         avatarMaps.depthTexture.anisotropy = 8;
 
-        const ratio = avatarMaps.ratio || 0.72;
-        const planeHeight = 7.2;
-        const planeWidth = planeHeight * ratio;
-        const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight, 160, 160);
+        const characterGroup = new THREE.Group();
 
-        const auraLayer = new THREE.Mesh(
-          geometry,
-          new THREE.MeshBasicMaterial({
-            map: avatarMaps.colorTexture,
-            alphaMap: avatarMaps.alphaTexture,
-            color: 0x36de78,
-            transparent: true,
-            opacity: 0.2,
-            depthWrite: false,
-            side: THREE.DoubleSide,
-            blending: THREE.AdditiveBlending
+        const body = new THREE.Mesh(
+          new THREE.CapsuleGeometry(0.62, 1.3, 8, 16),
+          new THREE.MeshStandardMaterial({
+            color: 0x0d2a1c,
+            roughness: 0.45,
+            metalness: 0.12
           })
         );
-        auraLayer.position.set(0.18, -0.08, -0.28);
-        auraLayer.scale.set(1.04, 1.04, 1);
+        body.position.set(0, -1.65, -0.35);
 
-        const ghostLayer = new THREE.Mesh(
-          geometry,
-          new THREE.MeshBasicMaterial({
-            map: avatarMaps.colorTexture,
-            alphaMap: avatarMaps.alphaTexture,
-            color: 0x9fffc9,
-            transparent: true,
-            opacity: 0.14,
-            depthWrite: false,
-            side: THREE.DoubleSide,
-            blending: THREE.AdditiveBlending
+        const shoulder = new THREE.Mesh(
+          new THREE.SphereGeometry(0.92, 24, 16),
+          new THREE.MeshStandardMaterial({
+            color: 0x123726,
+            roughness: 0.5,
+            metalness: 0.08
           })
         );
-        ghostLayer.position.set(-0.08, 0.02, 0.04);
-        ghostLayer.scale.set(1.01, 1.01, 1);
+        shoulder.scale.set(1.2, 0.68, 0.8);
+        shoulder.position.set(0, -1.15, -0.42);
 
-        const mainLayer = new THREE.Mesh(
-          geometry,
+        const armMaterial = new THREE.MeshStandardMaterial({
+          color: 0x184330,
+          roughness: 0.48,
+          metalness: 0.1
+        });
+        const forearmMaterial = new THREE.MeshStandardMaterial({
+          color: 0x1f5a3f,
+          roughness: 0.45,
+          metalness: 0.12
+        });
+
+        const leftArmGroup = new THREE.Group();
+        const leftUpperArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.14, 0.58, 6, 8), armMaterial);
+        const leftForearm = new THREE.Mesh(new THREE.CapsuleGeometry(0.11, 0.46, 6, 8), forearmMaterial);
+        leftUpperArm.rotation.z = 0.42;
+        leftUpperArm.position.set(-0.86, -1.12, -0.42);
+        leftForearm.rotation.z = 0.26;
+        leftForearm.position.set(-1.18, -1.56, -0.35);
+        leftArmGroup.add(leftUpperArm, leftForearm);
+
+        const rightArmGroup = new THREE.Group();
+        const rightUpperArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.14, 0.58, 6, 8), armMaterial);
+        const rightForearm = new THREE.Mesh(new THREE.CapsuleGeometry(0.11, 0.46, 6, 8), forearmMaterial);
+        rightUpperArm.rotation.z = -0.42;
+        rightUpperArm.position.set(0.86, -1.12, -0.42);
+        rightForearm.rotation.z = -0.26;
+        rightForearm.position.set(1.18, -1.56, -0.35);
+        rightArmGroup.add(rightUpperArm, rightForearm);
+
+        const headCore = new THREE.Mesh(
+          new THREE.SphereGeometry(1.02, 56, 40),
+          new THREE.MeshStandardMaterial({
+            color: 0xeac8a7,
+            roughness: 0.56,
+            metalness: 0.04
+          })
+        );
+        headCore.position.set(0, -0.1, 0);
+        headCore.scale.set(1.02, 1.12, 0.94);
+
+        const hairCap = new THREE.Mesh(
+          new THREE.SphereGeometry(1.02, 40, 24, 0, Math.PI * 2, 0, Math.PI * 0.55),
+          new THREE.MeshStandardMaterial({
+            color: 0x111111,
+            roughness: 0.74,
+            metalness: 0.05
+          })
+        );
+        hairCap.position.set(0, 0.42, 0.02);
+        hairCap.scale.set(1.02, 0.88, 0.94);
+
+        const eyeMaterial = new THREE.MeshBasicMaterial({
+          color: 0x9effc7,
+          transparent: true,
+          opacity: 0.75
+        });
+        const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.042, 16, 12), eyeMaterial);
+        const rightEye = new THREE.Mesh(new THREE.SphereGeometry(0.042, 16, 12), eyeMaterial.clone());
+        leftEye.position.set(-0.24, 0.07, 0.86);
+        rightEye.position.set(0.24, 0.07, 0.86);
+
+        const eyeGlowMaterial = new THREE.MeshBasicMaterial({
+          color: 0x7dffb0,
+          transparent: true,
+          opacity: 0.35,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false
+        });
+        const leftEyeGlow = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 12), eyeGlowMaterial);
+        const rightEyeGlow = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 12), eyeGlowMaterial.clone());
+        leftEyeGlow.position.copy(leftEye.position);
+        rightEyeGlow.position.copy(rightEye.position);
+
+        const facePlaneWidth = 2.02;
+        const facePlaneHeight = facePlaneWidth / (avatarMaps.ratio || 0.72);
+        const facePlane = new THREE.Mesh(
+          new THREE.PlaneGeometry(facePlaneWidth, facePlaneHeight, 1, 1),
           new THREE.MeshStandardMaterial({
             map: avatarMaps.colorTexture,
             alphaMap: avatarMaps.alphaTexture,
-            displacementMap: avatarMaps.depthTexture,
-            displacementScale: 0.42,
-            displacementBias: -0.18,
-            normalScale: new THREE.Vector2(0.5, 0.5),
             transparent: true,
-            roughness: 0.46,
-            metalness: 0.1,
-            depthWrite: true,
-            side: THREE.DoubleSide
+            roughness: 0.5,
+            metalness: 0.03,
+            depthWrite: false
           })
         );
-        mainLayer.position.z = 0.14;
+        facePlane.position.set(0, -0.02, 0.9);
+        facePlane.scale.set(1, 1.08, 1);
 
-        const edgeLayer = new THREE.Mesh(
-          geometry,
+        const faceGlow = new THREE.Mesh(
+          new THREE.PlaneGeometry(facePlaneWidth * 1.02, facePlaneHeight * 1.03, 1, 1),
           new THREE.MeshBasicMaterial({
             map: avatarMaps.alphaTexture,
-            color: 0xb9ffdb,
+            color: 0x9fffc9,
             transparent: true,
-            opacity: 0.08,
-            depthWrite: false,
-            side: THREE.DoubleSide
-          })
-        );
-        edgeLayer.position.z = -0.05;
-        edgeLayer.scale.set(1.03, 1.03, 1);
-
-        const frameOutline = new THREE.Mesh(
-          new THREE.RingGeometry(Math.max(planeWidth, planeHeight) * 0.35, Math.max(planeWidth, planeHeight) * 0.37, 128),
-          new THREE.MeshBasicMaterial({
-            color: 0x7dffb0,
-            transparent: true,
-            opacity: 0.16,
-            side: THREE.DoubleSide,
+            opacity: 0.14,
             blending: THREE.AdditiveBlending,
             depthWrite: false
           })
         );
-        frameOutline.position.set(0, -0.1, -0.1);
+        faceGlow.position.set(0.03, 0.02, 0.72);
 
-        avatar.add(auraLayer, ghostLayer, edgeLayer, mainLayer, frameOutline);
-        avatar.position.set(0, -0.42, 0.2);
-        fallbackObjects = [auraLayer, ghostLayer, edgeLayer, mainLayer, frameOutline];
-        fallbackState = { mainLayer, frameOutline, auraLayer, ghostLayer, edgeLayer };
+        const frameOutline = new THREE.Mesh(
+          new THREE.TorusGeometry(1.36, 0.024, 16, 120),
+          new THREE.MeshBasicMaterial({
+            color: 0x7dffb0,
+            transparent: true,
+            opacity: 0.22,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+          })
+        );
+        frameOutline.position.set(0, -0.14, -0.18);
+        frameOutline.rotation.x = 0.08;
+
+        const floorShadow = new THREE.Mesh(
+          new THREE.CircleGeometry(1.32, 48),
+          new THREE.MeshBasicMaterial({
+            color: 0x06150e,
+            transparent: true,
+            opacity: 0.52,
+            depthWrite: false
+          })
+        );
+        floorShadow.position.set(0, -2.45, -0.78);
+        floorShadow.rotation.x = -Math.PI / 2;
+        floorShadow.scale.set(1.25, 0.74, 1);
+
+        const floorShadowSoft = new THREE.Mesh(
+          new THREE.CircleGeometry(1.76, 64),
+          new THREE.MeshBasicMaterial({
+            color: 0x000000,
+            transparent: true,
+            opacity: 0.24,
+            depthWrite: false
+          })
+        );
+        floorShadowSoft.position.set(0, -2.5, -1.08);
+        floorShadowSoft.rotation.x = -Math.PI / 2;
+        floorShadowSoft.scale.set(1.48, 0.9, 1);
+
+        characterGroup.add(
+          floorShadow,
+          floorShadowSoft,
+          body,
+          shoulder,
+          leftArmGroup,
+          rightArmGroup,
+          headCore,
+          hairCap,
+          leftEyeGlow,
+          rightEyeGlow,
+          leftEye,
+          rightEye,
+          faceGlow,
+          facePlane,
+          frameOutline
+        );
+        avatar.add(characterGroup);
+        avatar.position.set(0, -0.38, 0.22);
+
+        fallbackObjects = [characterGroup];
+        fallbackState = {
+          characterGroup,
+          headCore,
+          hairCap,
+          leftArmGroup,
+          rightArmGroup,
+          leftEye,
+          rightEye,
+          leftEyeGlow,
+          rightEyeGlow,
+          floorShadow,
+          floorShadowSoft,
+          facePlane,
+          faceGlow,
+          frameOutline
+        };
         sceneRoot.classList.add("is-webgl-ready");
       },
       undefined,
@@ -288,6 +407,23 @@ if (sceneRoot && canvas) {
             }
           }
         });
+
+        // Add a dark shell behind the generated head to make depth clearer when rotating.
+        rigShell = rigModel.clone(true);
+        rigShell.traverse((node) => {
+          if (node.isMesh) {
+            node.material = new THREE.MeshBasicMaterial({
+              color: 0x0c2418,
+              transparent: true,
+              opacity: 0.55,
+              side: THREE.BackSide,
+              depthWrite: false
+            });
+          }
+        });
+        rigShell.scale.setScalar(1.03);
+        rigShell.position.z = -0.18;
+        avatar.add(rigShell);
         avatar.add(rigModel);
         sceneRoot.classList.add("is-webgl-ready");
 
@@ -363,34 +499,93 @@ if (sceneRoot && canvas) {
     avatar.position.y = -0.42 + Math.sin(elapsed * 1.25) * (reduced ? 0.01 : 0.07);
 
     if (rigModel) {
-      rigModel.rotation.y = pointer.x * 0.16 - 0.08;
-      rigModel.rotation.x = pointer.y * 0.08;
+      rigModel.rotation.y = pointer.x * 0.34 - 0.08;
+      rigModel.rotation.x = pointer.y * 0.12;
       if (proceduralRig) {
         const breath = Math.sin(elapsed * 1.35);
         const sway = Math.sin(elapsed * 0.8);
+        const turn = Math.sin(elapsed * 0.62);
         rigModel.position.y = proceduralRig.baseY + breath * 0.08;
         rigModel.position.z = proceduralRig.baseZ + Math.cos(elapsed * 1.1) * 0.03;
-        rigModel.rotation.y = proceduralRig.baseRotY + pointer.x * 0.24 + sway * 0.07;
+        rigModel.rotation.y = proceduralRig.baseRotY + pointer.x * 0.28 + sway * 0.08 + turn * 0.22;
         rigModel.rotation.x = pointer.y * 0.1 + Math.sin(elapsed * 0.95) * 0.03;
         rigModel.rotation.z = Math.sin(elapsed * 1.15) * 0.02;
         const scalePulse = proceduralRig.baseScale + Math.sin(elapsed * 1.35) * 0.018;
         rigModel.scale.setScalar(scalePulse);
       }
-    } else if (fallbackState) {
-      const { auraLayer, ghostLayer, mainLayer, frameOutline, edgeLayer } = fallbackState;
-      auraLayer.position.x = 0.18 - pointer.x * 0.12;
-      auraLayer.position.y = -0.08 + pointer.y * 0.08;
-      ghostLayer.position.x = -0.08 + pointer.x * 0.09;
-      ghostLayer.position.y = 0.02 - pointer.y * 0.06;
-      if (edgeLayer) {
-        edgeLayer.position.x = pointer.x * 0.03;
-        edgeLayer.position.y = pointer.y * 0.02;
+      if (rigShell) {
+        rigShell.position.y = rigModel.position.y;
+        rigShell.position.z = rigModel.position.z - 0.2;
+        rigShell.rotation.copy(rigModel.rotation);
+        rigShell.scale.copy(rigModel.scale).multiplyScalar(1.03);
       }
-      mainLayer.rotation.y = pointer.x * 0.12;
-      mainLayer.rotation.x = pointer.y * 0.06;
-      mainLayer.position.z = 0.14 + Math.sin(elapsed * 1.8) * 0.02;
+    } else if (fallbackState) {
+      const {
+        characterGroup,
+        headCore,
+        hairCap,
+        leftArmGroup,
+        rightArmGroup,
+        leftEye,
+        rightEye,
+        leftEyeGlow,
+        rightEyeGlow,
+        floorShadow,
+        floorShadowSoft,
+        facePlane,
+        faceGlow,
+        frameOutline
+      } = fallbackState;
+      characterGroup.position.y = Math.sin(elapsed * 1.28) * 0.08;
+      characterGroup.rotation.y = pointer.x * 0.3 + Math.sin(elapsed * 0.65) * 0.2;
+      characterGroup.rotation.x = pointer.y * 0.12 + Math.sin(elapsed * 0.82) * 0.03;
+      if (headCore && hairCap) {
+        headCore.rotation.y = pointer.x * 0.08;
+        hairCap.rotation.y = pointer.x * 0.1;
+      }
+      if (facePlane && faceGlow) {
+        facePlane.position.x = pointer.x * 0.12;
+        facePlane.position.y = -0.02 + pointer.y * 0.08;
+        faceGlow.position.x = 0.03 + pointer.x * 0.16;
+        faceGlow.position.y = 0.02 + pointer.y * 0.1;
+      }
+      if (leftArmGroup && rightArmGroup) {
+        leftArmGroup.rotation.x = Math.sin(elapsed * 2.15) * 0.28 + pointer.y * 0.14;
+        leftArmGroup.rotation.z = Math.sin(elapsed * 1.45) * 0.18 - pointer.x * 0.08;
+        rightArmGroup.rotation.x = Math.sin(elapsed * 2.15 + Math.PI) * 0.28 + pointer.y * 0.14;
+        rightArmGroup.rotation.z = Math.sin(elapsed * 1.45 + Math.PI) * 0.18 + pointer.x * 0.08;
+      }
+      if (leftEye && rightEye && leftEyeGlow && rightEyeGlow) {
+        if (elapsed >= nextBlinkAt) {
+          blinkProgress = Math.min(1, blinkProgress + delta / blinkDuration);
+          if (blinkProgress >= 1) {
+            blinkProgress = 0;
+            blinkDuration = 0.07 + Math.random() * 0.08;
+            nextBlinkAt = elapsed + 1.2 + Math.random() * 2.8;
+          }
+        }
+        const blinkCurve = blinkProgress < 1 ? Math.sin(blinkProgress * Math.PI) : 0;
+        const blinkAmount = 1 - blinkCurve * 0.9;
+        leftEye.scale.y = blinkAmount;
+        rightEye.scale.y = blinkAmount;
+        leftEyeGlow.scale.y = 0.9 + blinkAmount * 0.2;
+        rightEyeGlow.scale.y = 0.9 + blinkAmount * 0.2;
+        const eyeOpacity = 0.55 + Math.sin(elapsed * 4.8) * 0.18;
+        leftEye.material.opacity = eyeOpacity;
+        rightEye.material.opacity = eyeOpacity;
+      }
+      if (floorShadow) {
+        const shadowPulse = 1 + Math.sin(elapsed * 1.28) * 0.06;
+        floorShadow.scale.set(1.25 * shadowPulse, 0.74 * shadowPulse, 1);
+        floorShadow.material.opacity = 0.44 + Math.sin(elapsed * 1.28 + 0.3) * 0.06;
+      }
+      if (floorShadowSoft) {
+        const softPulse = 1 + Math.sin(elapsed * 1.1 + 0.5) * 0.04;
+        floorShadowSoft.scale.set(1.48 * softPulse, 0.9 * softPulse, 1);
+        floorShadowSoft.material.opacity = 0.2 + Math.sin(elapsed * 1.1 + 0.5) * 0.035;
+      }
       if (frameOutline) {
-        frameOutline.rotation.z = elapsed * 0.25;
+        frameOutline.rotation.z = elapsed * 0.3;
       }
     }
 
