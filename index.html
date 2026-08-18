@@ -8,60 +8,121 @@
     <meta name="author" content="Nguyễn Thanh Phong">
     <title>Thanh Phong — Frontend Developer</title>
     <link rel="icon" type="image/x-icon" href="images/logofinal.jpg">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://prod.spline.design" crossorigin>
+    <link rel="dns-prefetch" href="https://prod.spline.design">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="css/font-awesome/css/all.min.css?ver=1.2.1" rel="stylesheet">
-    <link href="css/aos.css?ver=1.2.1" rel="stylesheet">
-    <link href="css/main.css?ver=4.0.0" rel="stylesheet">
+    <link href="css/main.css?ver=9.3.0" rel="stylesheet">
+
+
+    <script>
+      (function() {
+        const origAttachShadow = Element.prototype.attachShadow;
+        Element.prototype.attachShadow = function(init) {
+          const shadowRoot = origAttachShadow.call(this, init);
+          if (this.tagName === 'SPLINE-VIEWER') {
+            const style = document.createElement('style');
+            style.textContent = '#logo, [id="logo"], a[href*="spline"], [class*="logo"], .spline-watermark { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; width: 0 !important; height: 0 !important; }';
+            shadowRoot.appendChild(style);
+          }
+          return shadowRoot;
+        };
+      })();
+    </script>
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.98/build/spline-viewer.js"></script>
   </head>
   <body id="top">
-    <!-- Starfield Canvas Background -->
-    <canvas id="starfield" aria-hidden="true"></canvas>
 
-    <!-- Floating Glassmorphism Navbar -->
+    <!-- ══════════════════════════════════════════
+         CINEMATIC INTRO PRELOADER ("Breeze Boy")
+         ══════════════════════════════════════════ -->
+    <div class="preloader-overlay" id="preloader" aria-label="Loading Experience">
+      <div class="preloader-content">
+        <div class="preloader-badge">
+          <span class="status-pulse"></span> PORTFOLIO 2026
+        </div>
+        <h1 class="preloader-title">
+          <span class="preloader-word">Breeze</span>
+          <span class="preloader-word preloader-accent">Boy</span>
+        </h1>
+        <div class="preloader-loader-track">
+          <div class="preloader-loader-fill"></div>
+        </div>
+        <p class="preloader-subtext">CHỜ ĐỢI ĐIỀU ĐẶC BIỆT...</p>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         GLOBAL PERSISTENT 3D STAGE & AMBIENT BACKDROP (HERO)
+         ══════════════════════════════════════════ -->
+    <div class="global-spline-stage" id="splineStage" aria-hidden="true">
+      <spline-viewer id="heroSpline" url="https://prod.spline.design/ZFkslSS32R6-l9hw/scene.splinecode" loading-anim-type="none" hint="false"></spline-viewer>
+    </div>
+    <div class="global-ambient-canvas" aria-hidden="true"></div>    <!-- ══════════════════════════════════════════
+         NAVBAR
+         ══════════════════════════════════════════ -->
     <header class="navbar-glass" id="navbar">
-      <a class="nav-logo" href="#top">thanhphong.dev</a>
+      <a class="nav-brand" href="#top">
+        <span class="nav-brand-dot"></span>
+        thanhphong.dev
+      </a>
       <nav class="nav-center" aria-label="Điều hướng chính">
         <a href="#projects">Dự Án</a>
         <a href="#about">Giới Thiệu</a>
         <a href="#experience">Kinh Nghiệm</a>
         <a href="#contact">Liên Hệ</a>
       </nav>
-      <a class="nav-resume" href="ThanhPhongCV.pdf" target="_blank">
-        <i class="fas fa-download"></i> Resume
-      </a>
+      <div class="nav-right-actions">
+        <span class="nav-status-pill">
+          <span class="status-pulse"></span>
+          OPEN TO WORK
+        </span>
+        <a class="nav-resume" href="ThanhPhongCV.pdf" target="_blank">
+          <i class="fas fa-arrow-down"></i> CV
+        </a>
+      </div>
       <button class="nav-toggle" type="button" aria-label="Mở menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </header>
 
-    <!-- Mobile Nav Overlay -->
+    <!-- Mobile Nav -->
     <div class="mobile-nav" id="mobileNav">
       <a href="#projects">Dự Án</a>
       <a href="#about">Giới Thiệu</a>
       <a href="#experience">Kinh Nghiệm</a>
       <a href="#contact">Liên Hệ</a>
-      <a class="mobile-nav-resume" href="ThanhPhongCV.pdf" target="_blank">
-        <i class="fas fa-download"></i> Tải Resume
+      <a href="ThanhPhongCV.pdf" target="_blank" style="font-weight: 700; color: var(--pop);">
+        <i class="fas fa-download"></i> Tải Resume PDF
       </a>
     </div>
 
-    <main>
+    <!-- ══════════════════════════════════════════
+         MAIN CONTENT OVERLAY (FROSTED GLASS)
+         ══════════════════════════════════════════ -->
+    <main class="site-content">
+
       <!-- ==================== HERO ==================== -->
       <section class="hero" id="home">
+        <div class="hero-vignette" aria-hidden="true"></div>
+
         <div class="hero-container">
-          <div class="hero-left" data-aos="fade-right" data-aos-duration="1000">
+          <div class="hero-left reveal">
+            <div class="hero-tagline-badge">
+              <i class="fas fa-terminal" style="color: var(--pop);"></i> CREATIVE FRONTEND DEVELOPER
+            </div>
             <h1 class="hero-name">
               <span class="hero-first">Thanh</span>
               <span class="hero-last">Phong</span>
             </h1>
             <p class="hero-subtitle">
-              FRONTEND <span class="accent-dot">·</span>
-              <span class="text-accent">UI/UX</span>
-              <span class="accent-dot">·</span> DEVELOPER
+              INTERACTIVE <span class="accent-dot">·</span> UI/UX <span class="accent-dot">·</span> FULLSTACK
             </p>
             <p class="hero-bio">
-              Xây dựng <strong>giao diện web</strong> tại giao điểm giữa lập trình frontend
-              và thiết kế trải nghiệm người dùng — từ UI responsive đến hệ thống quản trị hoàn chỉnh.
+              Xây dựng <strong>trải nghiệm web không gian 3D</strong> hiện đại, mượt mà và tập trung vào hiệu năng tại TP. Hồ Chí Minh.
             </p>
             <div class="hero-role">
               <span class="role-text" id="roleText">DEVELOPER</span>
@@ -69,30 +130,29 @@
             </div>
             <div class="hero-actions">
               <a class="btn-primary" href="#projects">
-                <i class="fas fa-rocket"></i> Xem Dự Án
+                <i class="fas fa-rocket"></i> Khám Phá Dự Án
               </a>
               <a class="btn-outline" href="ThanhPhongCV.pdf" target="_blank">
-                <i class="fas fa-file-alt"></i> Tải CV
+                <i class="far fa-file-pdf"></i> Tải Resume
               </a>
             </div>
           </div>
 
-          <div class="hero-right" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
+          <div class="hero-right reveal reveal-delay-2">
             <div class="profile-card">
               <div class="profile-tags-top">
-                <span class="tag tag-cyan">NESTJS / NEXTJS</span>
-                <span class="tag tag-cyan">REACTJS</span>
-                <span class="tag tag-cyan">.NET / C#</span>
+                <span class="tag tag-cyan">REACTJS / NEXTJS</span>
+                <span class="tag tag-cyan">NESTJS</span>
               </div>
               <div class="profile-image-wrap">
-                <img src="images/avatar1.jpeg" alt="Nguyễn Thanh Phong" class="profile-img">
+                <img src="images/avatar1.jpeg" alt="Nguyễn Thanh Phong" class="profile-img" width="250" height="310" fetchpriority="high" decoding="async">
                 <div class="profile-badge">
                   <i class="fas fa-code"></i> BUILDER
                 </div>
               </div>
               <div class="profile-tags-bottom">
                 <span class="tag tag-orange">JAVASCRIPT</span>
-                <span class="tag tag-orange">FIGMA</span>
+                <span class="tag tag-orange">FIGMA UI/UX</span>
               </div>
               <div class="profile-socials">
                 <a href="mailto:777thanhphong@gmail.com" aria-label="Email"><i class="far fa-envelope"></i></a>
@@ -107,77 +167,139 @@
       </section>
 
       <!-- ==================== PROJECTS ==================== -->
-      <section class="section-projects" id="projects">
+      <section class="section-wrapper" id="projects">
         <div class="container">
-          <p class="section-label" data-aos="fade-up">DỰ ÁN NỔI BẬT</p>
-          <h2 class="section-title" data-aos="fade-up">Dự Án</h2>
+          <div class="section-header reveal">
+            <p class="section-label">SELECTED WORKS</p>
+            <h2 class="section-title">Dự Án Nổi Bật</h2>
+            <p class="section-desc">Các sản phẩm web được xây dựng với sự tỉ mỉ từ kiến trúc mã nguồn tới từng pixel giao diện.</p>
+          </div>
 
-          <div class="projects-grid">
-            <article class="project-card" data-aos="fade-up" data-aos-delay="0">
-              <div class="project-accent accent-cyan"></div>
-              <h3 class="project-name">Cinema Booking</h3>
-              <p class="project-desc">
-                Website đặt vé rạp chiếu phim. Đặt ghế, thanh toán QR và admin quản lý hệ thống nhiều rạp.
-              </p>
-              <div class="project-media">
-                <a href="https://github.com/thanhphong28/Website-Cinema-Booking/tree/main" target="_blank" rel="noopener">
-                  <video src="images/pro4.mp4" autoplay muted loop playsinline></video>
-                  <span class="project-link-icon"><i class="fas fa-external-link-alt"></i></span>
-                </a>
+          <div class="projects-bento">
+            <!-- Project 1 -->
+            <article class="spotlight-card project-card reveal">
+              <div class="project-top-row">
+                <span class="project-tag-pill">FULLSTACK ARCHITECTURE</span>
+                <span class="project-year">2025</span>
               </div>
-              <div class="project-tags">
-                <span>.NET</span><span>C#</span><span>Bootstrap</span><span>SQL Server</span>
+              <h3 class="project-title">Cinema Booking Platform</h3>
+              <p class="project-desc">
+                Hệ thống đặt vé xem phim trực tuyến toàn diện. Chọn ghế realtime, thanh toán QR, quản lý ca chiếu và phân quyền admin đa cụm rạp.
+              </p>
+              <div class="project-browser-frame">
+                <div class="browser-header">
+                  <span class="browser-dot"></span>
+                  <span class="browser-dot"></span>
+                  <span class="browser-dot"></span>
+                  <span class="browser-url-bar">https://cinema-booking.local/booking</span>
+                </div>
+                <video src="images/pro4.mp4" muted loop playsinline preload="metadata"></video>
+              </div>
+              <div class="project-footer">
+                <div class="project-tech-pills">
+                  <span>.NET Core</span>
+                  <span>C#</span>
+                  <span>Bootstrap 5</span>
+                  <span>SQL Server</span>
+                </div>
+                <a class="project-action-link" href="https://github.com/thanhphong28/Website-Cinema-Booking/tree/main" target="_blank" rel="noopener">
+                  Source Code <i class="fas fa-arrow-right"></i>
+                </a>
               </div>
             </article>
 
-            <article class="project-card" data-aos="fade-up" data-aos-delay="100">
-              <div class="project-accent accent-orange"></div>
-              <h3 class="project-name">Apple Store</h3>
-              <p class="project-desc">
-                Website bán hàng tối giản. Luồng mua hàng cho khách và khu vực admin quản trị sản phẩm.
-              </p>
-              <div class="project-media">
-                <a href="https://github.com/thanhphong28/Website-Apple-Store/tree/main" target="_blank" rel="noopener">
-                  <video src="images/pro2.mp4" autoplay muted loop playsinline></video>
-                  <span class="project-link-icon"><i class="fas fa-external-link-alt"></i></span>
-                </a>
+            <!-- Project 2 -->
+            <article class="spotlight-card project-card reveal reveal-delay-1">
+              <div class="project-top-row">
+                <span class="project-tag-pill">E-COMMERCE UI</span>
+                <span class="project-year">2025</span>
               </div>
-              <div class="project-tags">
-                <span>PHP</span><span>HTML</span><span>CSS</span><span>JavaScript</span>
+              <h3 class="project-title">Apple Store Minimalist</h3>
+              <p class="project-desc">
+                Trải nghiệm mua sắm thiết bị Apple tối giản, luồng giỏ hàng liền mạch và bảng quản trị sản phẩm hiện đại.
+              </p>
+              <div class="project-browser-frame">
+                <div class="browser-header">
+                  <span class="browser-dot"></span>
+                  <span class="browser-dot"></span>
+                  <span class="browser-dot"></span>
+                  <span class="browser-url-bar">apple-store.demo</span>
+                </div>
+                <video src="images/pro2.mp4" muted loop playsinline preload="metadata"></video>
+              </div>
+              <div class="project-footer">
+                <div class="project-tech-pills">
+                  <span>PHP</span>
+                  <span>HTML5</span>
+                  <span>CSS3</span>
+                  <span>JavaScript</span>
+                </div>
+                <a class="project-action-link" href="https://github.com/thanhphong28/Website-Apple-Store/tree/main" target="_blank" rel="noopener">
+                  GitHub <i class="fas fa-arrow-right"></i>
+                </a>
               </div>
             </article>
 
-            <article class="project-card" data-aos="fade-up" data-aos-delay="200">
-              <div class="project-accent accent-purple"></div>
-              <h3 class="project-name">Health Records</h3>
-              <p class="project-desc">
-                Quản lý hồ sơ y tế. Ba vai trò: gia đình, bác sĩ và admin để theo dõi hồ sơ sức khỏe.
-              </p>
-              <div class="project-media">
-                <a href="https://github.com/thanhphong28/Web_Quan_Ly_Ho_So_Y_Te/tree/main" target="_blank" rel="noopener">
-                  <video src="images/pro3.mp4" autoplay muted loop playsinline></video>
-                  <span class="project-link-icon"><i class="fas fa-external-link-alt"></i></span>
-                </a>
+            <!-- Project 3 -->
+            <article class="spotlight-card project-card reveal reveal-delay-2">
+              <div class="project-top-row">
+                <span class="project-tag-pill">HEALTHCARE SYSTEM</span>
+                <span class="project-year">2024</span>
               </div>
-              <div class="project-tags">
-                <span>Java</span><span>API</span><span>Frontend</span><span>MySQL</span>
+              <h3 class="project-title">Medical Health Records</h3>
+              <p class="project-desc">
+                Hệ thống quản lý bệnh án số phân quyền 3 cấp (Bệnh nhân, Bác sĩ, Quản trị viên) đảm bảo bảo mật và dễ dàng truy xuất bệnh sử.
+              </p>
+              <div class="project-browser-frame">
+                <div class="browser-header">
+                  <span class="browser-dot"></span>
+                  <span class="browser-dot"></span>
+                  <span class="browser-dot"></span>
+                  <span class="browser-url-bar">health-records.internal</span>
+                </div>
+                <video src="images/pro3.mp4" muted loop playsinline preload="metadata"></video>
+              </div>
+              <div class="project-footer">
+                <div class="project-tech-pills">
+                  <span>Java</span>
+                  <span>MySQL</span>
+                  <span>REST API</span>
+                  <span>Frontend</span>
+                </div>
+                <a class="project-action-link" href="https://github.com/thanhphong28/Web_Quan_Ly_Ho_So_Y_Te/tree/main" target="_blank" rel="noopener">
+                  GitHub <i class="fas fa-arrow-right"></i>
+                </a>
               </div>
             </article>
 
-            <article class="project-card" data-aos="fade-up" data-aos-delay="300">
-              <div class="project-accent accent-cyan"></div>
-              <h3 class="project-name">Shoe Store</h3>
-              <p class="project-desc">
-                Giao diện clone phong cách Nike, có đăng nhập, bán hàng, đặt hàng và admin.
-              </p>
-              <div class="project-media">
-                <a href="https://thanhphong28.github.io/shopbelieve/index.html" target="_blank" rel="noopener">
-                  <video src="images/pro1.mp4" autoplay muted loop playsinline></video>
-                  <span class="project-link-icon"><i class="fas fa-external-link-alt"></i></span>
-                </a>
+            <!-- Project 4 -->
+            <article class="spotlight-card project-card reveal reveal-delay-3">
+              <div class="project-top-row">
+                <span class="project-tag-pill">BRAND CLONE & INTERACTION</span>
+                <span class="project-year">2024</span>
               </div>
-              <div class="project-tags">
-                <span>HTML</span><span>CSS</span><span>JavaScript</span>
+              <h3 class="project-title">Shoe Store & Brand Concept</h3>
+              <p class="project-desc">
+                Trang bán hàng thời trang thể thao phong cách Nike hiện đại. Tối ưu hiệu ứng cuộn, animation mượt mà và đặt hàng nhanh.
+              </p>
+              <div class="project-browser-frame">
+                <div class="browser-header">
+                  <span class="browser-dot"></span>
+                  <span class="browser-dot"></span>
+                  <span class="browser-dot"></span>
+                  <span class="browser-url-bar">thanhphong28.github.io/shopbelieve</span>
+                </div>
+                <video src="images/pro1.mp4" muted loop playsinline preload="metadata"></video>
+              </div>
+              <div class="project-footer">
+                <div class="project-tech-pills">
+                  <span>HTML5</span>
+                  <span>CSS3 Grid</span>
+                  <span>JavaScript ES6+</span>
+                </div>
+                <a class="project-action-link" href="https://thanhphong28.github.io/shopbelieve/index.html" target="_blank" rel="noopener">
+                  Live Demo <i class="fas fa-external-link-alt"></i>
+                </a>
               </div>
             </article>
           </div>
@@ -185,270 +307,324 @@
       </section>
 
       <!-- ==================== ABOUT ==================== -->
-      <section class="section-about" id="about">
+      <section class="section-wrapper" id="about">
         <div class="container">
-          <p class="section-label" data-aos="fade-up">TÔI LÀ AI</p>
-          <h2 class="section-title" data-aos="fade-up">Giới Thiệu</h2>
-
-          <div class="about-grid" data-aos="fade-up" data-aos-delay="100">
-            <!-- Location Card -->
-            <div class="about-card about-location">
-              <span class="card-label"><i class="fas fa-map-marker-alt"></i> VỊ TRÍ</span>
-              <h3 class="location-country">VIỆT NAM</h3>
-              <p class="location-coords">10.8231° N, 106.6297° E</p>
-              <p class="location-tz">GMT+7:00</p>
-            </div>
-
-            <!-- Bio Card -->
-            <div class="about-card about-bio">
-              <span class="card-label">/ GIỚI THIỆU</span>
-              <p>
-                Tôi là Thanh Phong — một lập trình viên web yêu thích UI/UX, luôn tìm cách
-                tạo ra trải nghiệm rõ ràng, mượt mà và thân thiện cho người dùng. Tôi định
-                hướng phát triển frontend với ReactJS, đồng thời có thể hỗ trợ backend,
-                thiết kế hình ảnh, chỉnh sửa video và âm thanh khi dự án cần.
-              </p>
-              <hr class="bio-divider">
-              <em class="bio-quote">"Nơi sự sáng tạo gặp gỡ công nghệ."</em>
-            </div>
+          <div class="section-header reveal">
+            <p class="section-label">PROFILE & CAPABILITIES</p>
+            <h2 class="section-title">Hồ Sơ & Kỹ Năng</h2>
+            <p class="section-desc">Cấu trúc năng lực chuyên môn và triết lý làm việc trong môi trường phát triển sản phẩm thực tế.</p>
           </div>
 
-          <!-- Skills Overview -->
-          <div class="about-skills" data-aos="fade-up" data-aos-delay="200">
-            <div class="about-card about-skill-card">
-              <span class="card-label">KỸ NĂNG CHÍNH</span>
-              <div class="skill-groups">
-                <div class="skill-group">
-                  <h4>Frontend</h4>
-                  <div class="skill-tags">
-                    <span>HTML</span><span>CSS</span><span>JavaScript</span><span>ReactJS</span><span>NextJS</span><span>Bootstrap</span>
+          <div class="about-bento">
+            <!-- Bento 1: Live Status -->
+            <div class="spotlight-card bento-telemetry reveal">
+              <div class="telemetry-header">
+                <span class="nav-status-pill">
+                  <span class="status-pulse"></span>
+                  LIVE STATUS
+                </span>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--pop); font-weight: 700;">VN / SGN</span>
+              </div>
+              <div class="telemetry-clock-wrap">
+                <div class="telemetry-time" id="localClock">--:--:--</div>
+                <p class="telemetry-location">
+                  <i class="fas fa-map-pin" style="color: var(--pop);"></i> TP. Hồ Chí Minh (GMT+7)
+                </p>
+              </div>
+            </div>
+
+            <!-- Bento 2: Code Terminal & Mindset -->
+            <div class="spotlight-card bento-terminal reveal reveal-delay-1">
+              <div class="terminal-header">
+                <span class="terminal-dot"></span>
+                <span>developer_profile.ts</span>
+              </div>
+              <p class="terminal-bio-text">
+                Tôi là <strong>Nguyễn Thanh Phong</strong>, tốt nghiệp chuyên ngành Kỹ thuật Phần mềm tại Đại học Sài Gòn. Tôi đam mê kiến tạo giao diện web trực quan, giàu tính nghệ thuật nhưng luôn đảm bảo tốc độ phản hồi tối ưu và khả năng mở rộng lâu dài.
+              </p>
+              <div class="terminal-code-box">
+                <span class="code-comment">// Developer Core Mindset</span><br>
+                <span class="code-keyword">const</span> <span class="code-prop">dev</span> = {<br>
+                &nbsp;&nbsp;core: <span class="code-str">"Frontend Architecture & Modern UI"</span>,<br>
+                &nbsp;&nbsp;focus: [<span class="code-str">"ReactJS"</span>, <span class="code-str">"Next.js"</span>, <span class="code-str">"Smooth Motion"</span>],<br>
+                &nbsp;&nbsp;mindset: <span class="code-str">"Pixel-perfect + High Performance"</span><br>
+                };
+              </div>
+            </div>
+
+            <!-- Bento 3: Skills Matrix -->
+            <div class="spotlight-card bento-skills reveal reveal-delay-2">
+              <div class="telemetry-header">
+                <span style="font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--pop); letter-spacing: 1px;">
+                  <i class="fas fa-layer-group"></i> TECH MATRIX
+                </span>
+              </div>
+              <div class="skills-category-grid">
+                <div class="skill-category-box">
+                  <h4><i class="fab fa-react"></i> Frontend Core</h4>
+                  <div class="skill-badges">
+                    <span>ReactJS</span>
+                    <span>NextJS</span>
+                    <span>JavaScript (ES6+)</span>
+                    <span>HTML5 / CSS3</span>
+                    <span>Bootstrap</span>
+                    <span>Tailwind</span>
                   </div>
                 </div>
-                <div class="skill-group">
-                  <h4>Backend</h4>
-                  <div class="skill-tags">
-                    <span>.NET / C#</span><span>NestJS</span><span>PHP</span><span>Java</span>
+                <div class="skill-category-box">
+                  <h4><i class="fas fa-server"></i> Backend & Data</h4>
+                  <div class="skill-badges">
+                    <span>.NET / C#</span>
+                    <span>NestJS</span>
+                    <span>PHP</span>
+                    <span>Java</span>
+                    <span>RESTful API</span>
+                    <span>MySQL / SQL Server</span>
                   </div>
                 </div>
-                <div class="skill-group">
-                  <h4>Công Cụ</h4>
-                  <div class="skill-tags">
-                    <span>Git</span><span>GitHub</span><span>Figma</span><span>Photoshop</span><span>Premiere</span>
+                <div class="skill-category-box">
+                  <h4><i class="fas fa-paint-brush"></i> Design & Tools</h4>
+                  <div class="skill-badges">
+                    <span>Figma</span>
+                    <span>Photoshop</span>
+                    <span>Premiere Pro</span>
+                    <span>Git / GitHub</span>
+                    <span>Postman</span>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Value Cards -->
-          <div class="value-cards" data-aos="fade-up" data-aos-delay="300">
-            <div class="value-card">
-              <h4 class="value-title value-cyan">PHÁT TRIỂN</h4>
-              <p>Luôn khám phá và học hỏi những công nghệ mới, được thúc đẩy bởi sự tò mò và khát khao hiểu biết.</p>
-            </div>
-            <div class="value-card">
-              <h4 class="value-title value-orange">TẬP TRUNG</h4>
-              <p>Làm việc sâu về hiệu suất và sự chính xác trong từng layer được xây dựng.</p>
-            </div>
-            <div class="value-card">
-              <h4 class="value-title value-purple">KỶ LUẬT</h4>
-              <p>Kỷ luật và sự cống hiến trong từng dòng code, từng pixel được đặt đúng chỗ.</p>
+            <!-- Bento 4: Philosophy -->
+            <div class="spotlight-card bento-philosophy reveal reveal-delay-3">
+              <p class="philosophy-quote">
+                "Nơi nghệ thuật thị giác hòa cùng sức mạnh công nghệ."
+              </p>
+              <p class="philosophy-sub">
+                Đề cao tính chính trực, tinh thần học hỏi liên tục và trách nhiệm tuyệt đối trong từng dòng mã nguồn được bàn giao.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       <!-- ==================== EXPERIENCE ==================== -->
-      <section class="section-experience" id="experience">
+      <section class="section-wrapper" id="experience">
         <div class="container">
-          <p class="section-label" data-aos="fade-up">HỌC VẤN & CÔNG VIỆC</p>
-          <h2 class="section-title" data-aos="fade-up">Kinh Nghiệm</h2>
+          <div class="section-header reveal">
+            <p class="section-label">TRACK RECORD</p>
+            <h2 class="section-title">Kinh Nghiệm & Học Vấn</h2>
+            <p class="section-desc">Hành trình tích lũy chuyên môn và giải quyết các bài toán sản phẩm thực tế.</p>
+          </div>
 
-          <div class="exp-grid">
-            <!-- Education Column -->
-            <div class="exp-column" data-aos="fade-right">
-              <div class="exp-edu-item">
-                <span class="exp-date"><i class="fas fa-circle exp-dot"></i> 2021 — 2025</span>
-                <h3 class="exp-role">Cử Nhân Công Nghệ Thông Tin</h3>
-                <p class="exp-detail">Kỹ thuật Phần mềm</p>
-                <p class="exp-company">Đại học Sài Gòn</p>
-              </div>
-              <div class="exp-edu-item">
-                <span class="exp-date"><i class="fas fa-circle exp-dot"></i> 01/2026</span>
-                <h3 class="exp-role">Chứng Chỉ TOEIC</h3>
-                <p class="exp-detail">515 điểm nghe và đọc</p>
-                <p class="exp-company">IIG Vietnam</p>
-              </div>
-            </div>
-
+          <div class="exp-timeline-container">
             <!-- Work Column -->
-            <div class="exp-column" data-aos="fade-left">
-              <div class="exp-work-card">
-                <div class="exp-work-header">
-                  <span class="exp-date-work">03/2026 — Hiện tại</span>
-                  <span class="exp-icon"><i class="fas fa-briefcase"></i></span>
+            <div class="timeline-column">
+              <div class="spotlight-card timeline-card reveal">
+                <div class="timeline-badge-row">
+                  <span class="timeline-period">03/2026 — HIỆN TẠI</span>
+                  <span class="timeline-active-tag"><span class="status-pulse"></span> CURRENT</span>
                 </div>
-                <h3 class="exp-role">Frontend Developer</h3>
-                <p class="exp-company-work">315 Medical</p>
-                <p class="exp-desc">
-                  Phát triển giao diện web cho hệ thống quản lý y tế, thiết kế UI/UX và tích hợp API
-                  phục vụ nghiệp vụ chăm sóc sức khỏe.
+                <h3 class="timeline-role">Frontend Developer</h3>
+                <p class="timeline-org">315 Medical</p>
+                <p class="timeline-desc">
+                  Phát triển và tối ưu hóa hệ thống giao diện khám chữa bệnh trực tuyến, thiết kế UI/UX theo tiêu chuẩn y tế và tích hợp hệ thống API quản lý bệnh án.
                 </p>
-                <div class="exp-tags">
-                  <span>ReactJS</span><span>API</span><span>UI/UX</span>
+                <div class="project-tech-pills">
+                  <span>ReactJS</span><span>API Integration</span><span>Healthcare UI</span>
                 </div>
               </div>
 
-              <div class="exp-work-card">
-                <div class="exp-work-header">
-                  <span class="exp-date-work">2025</span>
-                  <span class="exp-icon"><i class="fas fa-briefcase"></i></span>
+              <div class="spotlight-card timeline-card reveal reveal-delay-1">
+                <div class="timeline-badge-row">
+                  <span class="timeline-period">2025</span>
+                  <span style="font-family: var(--mono); font-size: 10.5px; color: var(--text-muted);">INTERNSHIP</span>
                 </div>
-                <h3 class="exp-role">Frontend Developer Intern</h3>
-                <p class="exp-company-work">VNA Group</p>
-                <p class="exp-desc">
-                  Nhóm trưởng team 5 thành viên, phân công và quản lý tiến độ.
-                  Thiết kế, phát triển giao diện web, tích hợp API, hỗ trợ backend
-                  và review source code cho thành viên.
+                <h3 class="timeline-role">Frontend Developer Intern & Team Lead</h3>
+                <p class="timeline-org">VNA Group</p>
+                <p class="timeline-desc">
+                  Trưởng nhóm dẫn dắt 5 thành viên, quản lý tiến độ sprint, phát triển giao diện web ReactJS, tích hợp REST API và chịu trách nhiệm review code cho toàn bộ dự án.
                 </p>
-                <div class="exp-tags">
-                  <span>ReactJS</span><span>REST API</span><span>Code Review</span><span>Team Lead</span>
+                <div class="project-tech-pills">
+                  <span>ReactJS</span><span>Team Management</span><span>Code Review</span>
                 </div>
               </div>
 
-              <div class="exp-work-card">
-                <div class="exp-work-header">
-                  <span class="exp-date-work">2025</span>
-                  <span class="exp-icon"><i class="fas fa-briefcase"></i></span>
+              <div class="spotlight-card timeline-card reveal reveal-delay-2">
+                <div class="timeline-badge-row">
+                  <span class="timeline-period">2025</span>
+                  <span style="font-family: var(--mono); font-size: 10.5px; color: var(--text-muted);">TECH SUPPORT</span>
                 </div>
-                <h3 class="exp-role">Nhân Viên Kỹ Thuật</h3>
-                <p class="exp-company-work">K12Online Viettel</p>
-                <p class="exp-desc">
-                  Hỗ trợ giáo viên và học sinh sử dụng web/app K12Online, xử lý lỗi kỹ thuật,
-                  khôi phục tài khoản và đào tạo trực tiếp tại trường.
+                <h3 class="timeline-role">Nhân Viên Kỹ Thuật Hệ Thống</h3>
+                <p class="timeline-org">K12Online Viettel</p>
+                <p class="timeline-desc">
+                  Hỗ trợ vận hành nền tảng học tập trực tuyến, xử lý sự cố người dùng, quản trị tài khoản và trực tiếp hướng dẫn giáo viên/học sinh tại các trường học.
                 </p>
-                <div class="exp-tags">
-                  <span>Hỗ Trợ KT</span><span>Đào Tạo</span><span>Web App</span>
+              </div>
+            </div>
+
+            <!-- Education & Certificate Column -->
+            <div class="timeline-column">
+              <div class="spotlight-card timeline-card reveal">
+                <div class="timeline-badge-row">
+                  <span class="timeline-period">2021 — 2025</span>
+                  <span style="font-family: var(--mono); font-size: 10.5px; color: var(--pop); font-weight: 700;">DEGREE</span>
                 </div>
+                <h3 class="timeline-role">Kỹ Sư Công Nghệ Thông Tin</h3>
+                <p class="timeline-org">Đại học Sài Gòn (SGU)</p>
+                <p class="timeline-desc">
+                  Chuyên ngành Kỹ thuật Phần mềm. Tốt nghiệp với nền tảng vững chắc về cấu trúc dữ liệu, giải thuật, lập trình hướng đối tượng, kiến trúc hệ thống và quy trình phát triển Agile/Scrum.
+                </p>
+              </div>
+
+              <div class="spotlight-card timeline-card reveal reveal-delay-1">
+                <div class="timeline-badge-row">
+                  <span class="timeline-period">01/2026</span>
+                  <span style="font-family: var(--mono); font-size: 10.5px; color: var(--emerald); font-weight: 700;">CERTIFIED</span>
+                </div>
+                <h3 class="timeline-role">Chứng Chỉ TOEIC 515</h3>
+                <p class="timeline-org">IIG Vietnam</p>
+                <p class="timeline-desc">
+                  Chứng chỉ năng lực tiếng Anh nghe và đọc, đáp ứng tốt khả năng đọc tài liệu chuyên ngành, trao đổi kỹ thuật và làm việc trong môi trường đa quốc gia.
+                </p>
+              </div>
+              <div class="spotlight-card timeline-card reveal reveal-delay-1">
+                <div class="timeline-badge-row">
+                  <span class="timeline-period">01/2026</span>
+                  <span style="font-family: var(--mono); font-size: 10.5px; color: var(--emerald); font-weight: 700;">CERTIFIED</span>
+                </div>
+                <h3 class="timeline-role">Chứng Chỉ Coursera</h3>
+                <p class="timeline-org">Google UX Design</p>
+                <p class="timeline-org">Google AI Essentials</p>
+
+                <p class="timeline-desc">
+                  Hiểu rõ hành vi người dùng để thiết kế Frontend tối ưu nhất. Kết hợp Ai để đẩy nhanh quá trình thực hiện sản phẩm.
+                </p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ==================== CONTACT ==================== -->
-      <section class="section-contact" id="contact">
+      <!-- ==================== CONTACT & FAQ ==================== -->
+      <section class="section-wrapper" id="contact">
         <div class="container">
-          <p class="section-label" data-aos="fade-up">KẾT NỐI</p>
-          <h2 class="section-title" data-aos="fade-up">Liên Hệ</h2>
-
-          <!-- Contact Form -->
-          <div class="contact-card" data-aos="fade-up" data-aos-delay="100">
-            <h3 class="contact-form-title"><i class="far fa-envelope"></i> Gửi Tin Nhắn</h3>
-            <form class="contact-form" id="contactForm" action="https://formspree.io/f/placeholder" method="POST">
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="contactName">HỌ TÊN</label>
-                  <input type="text" id="contactName" name="name" placeholder="Tên của bạn" required>
-                </div>
-                <div class="form-group">
-                  <label for="contactEmail">EMAIL</label>
-                  <input type="email" id="contactEmail" name="email" placeholder="email@domain.com" required>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="contactMessage">TIN NHẮN</label>
-                <textarea id="contactMessage" name="message" rows="4" placeholder="Bạn muốn trao đổi điều gì?" required></textarea>
-              </div>
-              <button type="submit" class="btn-primary btn-send">
-                <i class="fas fa-paper-plane"></i> Gửi Tin Nhắn
-              </button>
-            </form>
+          <div class="section-header reveal">
+            <p class="section-label">GET IN TOUCH</p>
+            <h2 class="section-title">Kết Nối & Hợp Tác</h2>
+            <p class="section-desc">Tôi luôn sẵn sàng đón nhận những cơ hội hợp tác mới, dự án freelance hoặc vị trí phát triển chính thức.</p>
           </div>
 
-          <!-- Contact Info -->
-          <div class="contact-info-grid" data-aos="fade-up" data-aos-delay="200">
-            <div class="contact-info-item">
-              <i class="far fa-envelope"></i>
-              <a href="mailto:777thanhphong@gmail.com">777thanhphong@gmail.com</a>
+          <div class="contact-bento-grid">
+            <!-- Form -->
+            <div class="spotlight-card contact-card-main reveal">
+              <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
+                <i class="far fa-paper-plane" style="color: var(--pop);"></i> Gửi Tin Nhắn
+              </h3>
+              <form id="contactForm" action="https://formspree.io/f/placeholder" method="POST">
+                <div class="form-group-bento">
+                  <label for="contactName">HỌ VÀ TÊN</label>
+                  <input type="text" id="contactName" name="name" placeholder="Nguyễn Văn A" required>
+                </div>
+                <div class="form-group-bento">
+                  <label for="contactEmail">ĐỊA CHỈ EMAIL</label>
+                  <input type="email" id="contactEmail" name="email" placeholder="example@domain.com" required>
+                </div>
+                <div class="form-group-bento">
+                  <label for="contactMessage">NỘI DUNG TRAO ĐỔI</label>
+                  <textarea id="contactMessage" name="message" rows="4" placeholder="Bạn muốn thảo luận về dự án hay cơ hội nghề nghiệp nào?" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;">
+                  <i class="fas fa-paper-plane"></i> Gửi Tin Nhắn Trực Tiếp
+                </button>
+              </form>
             </div>
-            <div class="contact-info-item">
-              <i class="fas fa-phone-alt"></i>
-              <a href="tel:+84374272357">+84 374-272-357</a>
+
+            <!-- Direct Channels -->
+            <div class="spotlight-card contact-card-info reveal reveal-delay-1">
+              <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">
+                Kênh Liên Lạc Trực Tiếp
+              </h3>
+              <p style="font-size: 14px; color: var(--text-mid); line-height: 1.6;">
+                Bạn có thể sao chép nhanh email hoặc liên hệ trực tiếp qua số điện thoại bên dưới.
+              </p>
+
+              <div style="margin: 8px 0;">
+                <button type="button" class="copy-email-btn" id="copyEmailBtn" data-email="777thanhphong@gmail.com">
+                  <i class="far fa-copy"></i>
+                  <span>777thanhphong@gmail.com</span>
+                </button>
+              </div>
+
+              <a class="contact-direct-link" href="tel:+84374272357">
+                <span><i class="fas fa-phone-alt" style="color: var(--pop); margin-right: 8px;"></i> (+84) 374-272-357</span>
+                <i class="fas fa-arrow-right" style="font-size: 12px; opacity: 0.5;"></i>
+              </a>
+
+              <div class="contact-direct-link">
+                <span><i class="fas fa-map-marker-alt" style="color: var(--pop); margin-right: 8px;"></i> TP. Hồ Chí Minh</span>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--emerald);">VIETNAM</span>
+              </div>
+
+              <div style="display: flex; gap: 8px; margin-top: auto;">
+                <a class="project-action-link" style="flex: 1; justify-content: center;" href="https://github.com/thanhphong28" target="_blank" rel="noopener">
+                  <i class="fab fa-github"></i> GitHub
+                </a>
+                <a class="project-action-link" style="flex: 1; justify-content: center;" href="https://www.facebook.com/breezeboy281/" target="_blank" rel="noopener">
+                  <i class="fab fa-facebook-f"></i> Facebook
+                </a>
+              </div>
             </div>
-            <div class="contact-info-item">
-              <i class="fas fa-map-marker-alt"></i>
-              <span>Quận Gò Vấp, TP. Hồ Chí Minh</span>
+          </div>
+
+          <!-- FAQ Accordion -->
+          <div class="faq-wrap reveal">
+            <h3 style="font-size: 22px; font-weight: 700; margin-bottom: 20px; letter-spacing: -0.4px;">
+              Câu Hỏi Thường Gặp
+            </h3>
+
+            <div class="faq-item">
+              <button class="faq-question" aria-expanded="false">
+                Bạn có đang tìm kiếm cơ hội việc làm mới không?
+                <i class="fas fa-chevron-down faq-icon"></i>
+              </button>
+              <div class="faq-answer">
+                <p>Có, tôi luôn sẵn sàng đón nhận cơ hội Frontend Developer toàn thời gian hoặc dự án tự do (Freelance), tập trung vào ReactJS, Next.js và UI/UX.</p>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question" aria-expanded="false">
+                Hình thức làm việc mà bạn có thể đáp ứng?
+                <i class="fas fa-chevron-down faq-icon"></i>
+              </button>
+              <div class="faq-answer">
+                <p>Tôi có thể làm việc On-site, Hybrid tại khu vực TP. Hồ Chí Minh hoặc Remote hoàn toàn cho các doanh nghiệp trong và ngoài nước.</p>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question" aria-expanded="false">
+                Quy trình phát triển một giao diện web của bạn như thế nào?
+                <i class="fas fa-chevron-down faq-icon"></i>
+              </button>
+              <div class="faq-answer">
+                <p>Tôi bắt đầu từ nghiên cứu yêu cầu & thiết kế Figma (wireframe/prototype), phân rã component logic, viết mã nguồn sạch (clean code), tích hợp API và tối ưu hiệu suất tốc độ tải cũng như khả năng hiển thị tương thích trên mọi thiết bị.</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ==================== FAQ ==================== -->
-      <section class="section-faq">
-        <div class="container">
-          <div class="faq-card" data-aos="fade-up">
-            <span class="card-label">CÂU HỎI THƯỜNG GẶP</span>
-
-            <div class="faq-item">
-              <button class="faq-question" aria-expanded="false">
-                Bạn có sẵn sàng nhận việc không?
-                <i class="fas fa-chevron-down faq-icon"></i>
-              </button>
-              <div class="faq-answer">
-                <p>Có, tôi hiện đang tìm kiếm cơ hội phát triển trong lĩnh vực frontend development, đặc biệt với ReactJS và các dự án UI/UX.</p>
-              </div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-question" aria-expanded="false">
-                Trình độ học vấn của bạn?
-                <i class="fas fa-chevron-down faq-icon"></i>
-              </button>
-              <div class="faq-answer">
-                <p>Tôi tốt nghiệp ngành Công nghệ Thông tin — chuyên ngành Kỹ thuật Phần mềm tại Đại học Sài Gòn (2021-2025) và có chứng chỉ TOEIC 515.</p>
-              </div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-question" aria-expanded="false">
-                Bạn thường làm việc với công nghệ gì?
-                <i class="fas fa-chevron-down faq-icon"></i>
-              </button>
-              <div class="faq-answer">
-                <p>Frontend: HTML, CSS, JavaScript, ReactJS, Bootstrap. Backend: .NET/C#, PHP, Java. Công cụ: Git, Figma, Photoshop, Premiere Pro.</p>
-              </div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-question" aria-expanded="false">
-                Bạn có thể làm việc remote không?
-                <i class="fas fa-chevron-down faq-icon"></i>
-              </button>
-              <div class="faq-answer">
-                <p>Có, tôi có thể làm việc remote hoặc onsite tại khu vực TP. Hồ Chí Minh. Tôi linh hoạt với cả hai hình thức.</p>
-              </div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-question" aria-expanded="false">
-                Bạn có thể hợp tác dự án không?
-                <i class="fas fa-chevron-down faq-icon"></i>
-              </button>
-              <div class="faq-answer">
-                <p>Chắc chắn rồi! Tôi luôn sẵn sàng hợp tác trong các dự án web, freelance hoặc open-source. Hãy liên hệ qua email hoặc mạng xã hội.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
 
-    <!-- Footer -->
+    <!-- ══════════════════════════════════════════
+         FOOTER
+         ══════════════════════════════════════════ -->
     <footer class="site-footer">
       <div class="container footer-inner">
         <p class="footer-copy">
-          <span class="footer-dot"></span> © 2026 NGUYỄN THANH PHONG
+          <span class="nav-brand-dot"></span> © 2026 NGUYỄN THANH PHONG — DESIGNED WITH TASTE & 3D SPATIAL DEPTH
         </p>
         <div class="footer-links">
           <a href="https://github.com/thanhphong28" target="_blank" rel="noopener">
@@ -464,7 +640,8 @@
       </div>
     </footer>
 
-    <script src="scripts/aos.js?ver=1.2.1"></script>
-    <script src="scripts/main.js?ver=4.0.0"></script>
+
+
+    <script src="scripts/main.js?ver=9.3.0"></script>
   </body>
 </html>
