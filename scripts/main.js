@@ -4,12 +4,27 @@
    ============================================ */
 
 document.addEventListener("DOMContentLoaded", () => {
-  /* ── 0. Cinematic Intro Preloader ("Breeze Boy") & Staged Entrance ── */
+  /* ── 0. Adaptive Hardware Benchmark & Performance Tier Detection ── */
+  const isLowSpecDevice = () => {
+    const cores = navigator.hardwareConcurrency || 4;
+    const memory = navigator.deviceMemory || 4;
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    const saveData = connection && (connection.saveData || connection.effectiveType === '2g' || connection.effectiveType === 'slow-2g');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    return cores < 4 || memory < 4 || (isMobile && cores < 6) || saveData || prefersReducedMotion;
+  };
+
+  const isLowSpec = isLowSpecDevice();
+  document.body.classList.add(isLowSpec ? "low-spec" : "high-spec");
+
+  /* ── 0.1 Cinematic Intro Preloader ("Breeze Boy") & Staged Entrance ── */
   const preloader = document.getElementById("preloader");
   const heroSpline = document.getElementById("heroSpline");
   let preloaderDismissed = false;
   const startTime = Date.now();
-  const MIN_DISPLAY_TIME = 1800; // Guaranteed minimum 1.8s for the Breeze Boy cinematic intro
+  const MIN_DISPLAY_TIME = isLowSpec ? 1000 : 1800; // Faster unlock for low-spec devices
 
   const dismissPreloader = () => {
     if (preloaderDismissed) return;
@@ -21,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (preloaderDismissed) return;
       preloaderDismissed = true;
 
-      // Trigger staggered entrance for Navbar, Hero info & profile card immediately as preloader starts fading
+      // Trigger staggered entrance for Navbar, Hero info & profile card
       document.body.classList.add("loaded");
 
       if (preloader) {
@@ -30,37 +45,30 @@ document.addEventListener("DOMContentLoaded", () => {
           if (preloader.parentNode) {
             preloader.remove();
           }
-        }, 900);
+        }, 800);
       }
     }, remainingTime);
   };
 
-  // Listen for Spline 3D scene load completion
-  if (heroSpline) {
-    heroSpline.addEventListener("load", () => {
-      dismissPreloader();
-    });
-    heroSpline.addEventListener("load-complete", () => {
-      dismissPreloader();
-    });
+  // Listen for Spline 3D scene load completion (if enabled)
+  if (heroSpline && !isLowSpec) {
+    heroSpline.addEventListener("load", dismissPreloader);
+    heroSpline.addEventListener("load-complete", dismissPreloader);
   }
 
-  // Fallback timer: guarantees page smoothly unlocks after max 3.5s even if offline/slow
-  setTimeout(() => {
-    dismissPreloader();
-  }, 3500);
+  // Fallback timer: guarantees page smoothly unlocks after max 2.8s
+  setTimeout(dismissPreloader, isLowSpec ? 1500 : 2800);
 
-  /* ── 0.1 Spline 3D Global Mouse Tracking Bridge (Zero-Jank Delta Filter) ── */
-  if (heroSpline) {
+  /* ── 0.2 Spline 3D Mouse Tracking Bridge (Throttled & Low-Spec Guarded) ── */
+  if (heroSpline && !isLowSpec) {
     let mouseThrottle = false;
     let lastX = 0;
     let lastY = 0;
 
     window.addEventListener("mousemove", (e) => {
-      // Delta filter: ignore sub-pixel / micro jitter to save CPU cycles
       const dx = Math.abs(e.clientX - lastX);
       const dy = Math.abs(e.clientY - lastY);
-      if (dx < 2 && dy < 2) return;
+      if (dx < 4 && dy < 4) return;
 
       lastX = e.clientX;
       lastY = e.clientY;
@@ -164,21 +172,25 @@ document.addEventListener("DOMContentLoaded", () => {
     roleTextEl.style.transition = "opacity 0.3s ease, transform 0.3s ease";
   }
 
-  /* ── 5. GPU Offscreen Culling for Hero 3D Robot Stage ── */
+  /* ── 5. GPU Offscreen Culling & Complete Freeze for Hero 3D Robot Stage ── */
   const globalSplineStage = document.getElementById("splineStage");
   const homeSection = document.getElementById("home");
-  if (homeSection && globalSplineStage) {
+  if (homeSection && globalSplineStage && !isLowSpec) {
     const heroObserver = new IntersectionObserver(
       ([entry]) => {
-        globalSplineStage.classList.toggle("faded", !entry.isIntersecting);
+        const isVisible = entry.isIntersecting;
+        globalSplineStage.classList.toggle("faded", !isVisible);
+        globalSplineStage.style.display = isVisible ? "block" : "none";
       },
-      { threshold: 0.1 }
+      { threshold: 0.05 }
     );
     heroObserver.observe(homeSection);
   }
 
-  /* ── 6. Spotlight Card Engine (GPU-Optimized with will-change management) ── */
+  /* ── 6. Spotlight Card Engine (GPU-Optimized with Hover Detection) ── */
   const spotlightCards = document.querySelectorAll(".spotlight-card");
+  const hasTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
   spotlightCards.forEach((card) => {
     let ticking = false;
 
@@ -188,23 +200,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }, { passive: true });
 
     card.addEventListener("mouseleave", () => {
-      // Delay removal so exit transition completes
       setTimeout(() => {
         card.style.willChange = "auto";
-      }, 500);
+      }, 400);
     }, { passive: true });
 
-    card.addEventListener("mousemove", (e) => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const rect = card.getBoundingClientRect();
-          card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
-          card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }, { passive: true });
+    if (!hasTouch && !isLowSpec) {
+      card.addEventListener("mousemove", (e) => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+            card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
+    }
   });
 
   /* ── 7. Live Vietnam Time Clock ── */
@@ -307,7 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  /* ── 12. Smart Video Decoder Culling (Max GPU Performance) ── */
+  /* ── 12. Smart Video Decoder Culling & Lazy Stream Loading ── */
   const videos = document.querySelectorAll("video");
   if (videos.length > 0 && "IntersectionObserver" in window) {
     const videoObserver = new IntersectionObserver(
@@ -315,18 +328,20 @@ document.addEventListener("DOMContentLoaded", () => {
         entries.forEach((entry) => {
           const video = entry.target;
           if (entry.isIntersecting) {
-            // Play only when card is in viewport
+            if (video.getAttribute("data-src") && !video.src) {
+              video.src = video.getAttribute("data-src");
+              video.load();
+            }
             const playPromise = video.play();
             if (playPromise !== undefined) {
               playPromise.catch(() => {});
             }
           } else {
-            // Freeze video decode immediately when scrolled offscreen
             video.pause();
           }
         });
       },
-      { threshold: 0.15, rootMargin: "60px" }
+      { threshold: 0.1, rootMargin: "80px" }
     );
     videos.forEach((video) => {
       video.pause();

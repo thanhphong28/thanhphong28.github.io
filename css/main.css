@@ -3,7 +3,6 @@
    Author: Nguyen Thanh Phong
    Aesthetic: Frosted Glass Bento + Butter-Smooth Motion
    ============================================ */
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
 
 /* ── Design Tokens ── */
 :root {
@@ -1676,3 +1675,53 @@ section[id] {
     will-change: auto;
   }
 }
+
+/* ══════════════════════════════════════════
+   ADAPTIVE HARDWARE PERFORMANCE ENGINE (.low-spec)
+   Optimized for low-end CPUs/GPUs, mobile & battery saver
+   ══════════════════════════════════════════ */
+.spotlight-card {
+  contain: layout style paint;
+}
+
+body.low-spec .navbar-glass,
+body.low-spec .spotlight-card,
+body.low-spec .preloader-overlay,
+body.low-spec .mobile-nav {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.low-spec .navbar-glass {
+  background: rgba(255, 255, 255, 0.96) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
+body.low-spec .navbar-glass.scrolled {
+  background: #ffffff !important;
+}
+
+body.low-spec .spotlight-card {
+  background: #ffffff !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+body.low-spec .global-spline-stage {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+body.low-spec .global-ambient-canvas {
+  background:
+    radial-gradient(circle at 80% 20%, rgba(61, 90, 254, 0.08) 0%, transparent 55%),
+    radial-gradient(circle at 20% 75%, rgba(16, 185, 129, 0.06) 0%, transparent 50%),
+    #f4f4f2 !important;
+}
+
+@media (hover: none) {
+  .spotlight-card::before {
+    display: none !important;
+  }
+}
+
