@@ -256,6 +256,98 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  /* ── 8.1 Contact Form Submission via FormSubmit AJAX ── */
+  const contactForm = document.getElementById("contactForm");
+  const contactSubmitBtn = document.getElementById("contactSubmitBtn");
+  const contactFormStatus = document.getElementById("contactFormStatus");
+
+  if (contactForm && contactSubmitBtn) {
+    contactForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const nameInput = document.getElementById("contactName");
+      const emailInput = document.getElementById("contactEmail");
+      const messageInput = document.getElementById("contactMessage");
+
+      const name = nameInput ? nameInput.value.trim() : "";
+      const email = emailInput ? emailInput.value.trim() : "";
+      const message = messageInput ? messageInput.value.trim() : "";
+
+      if (!name || !email || !message) {
+        if (contactFormStatus) {
+          contactFormStatus.className = "form-status-msg error";
+          contactFormStatus.innerHTML = `<i class="fas fa-exclamation-circle"></i> <div>Vui lòng điền đầy đủ tất cả các trường thông tin.</div>`;
+          contactFormStatus.style.display = "flex";
+        }
+        return;
+      }
+
+      // Set Loading State
+      const originalBtnHtml = contactSubmitBtn.innerHTML;
+      contactSubmitBtn.disabled = true;
+      contactSubmitBtn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> <span>Đang gửi tin nhắn...</span>`;
+      
+      if (contactFormStatus) {
+        contactFormStatus.style.display = "none";
+      }
+
+      try {
+        const response = await fetch("https://formsubmit.co/ajax/777thanhphong@gmail.com", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            message: message,
+            _subject: `[Portfolio Contact] Tin nhắn mới từ ${name}`,
+            _template: "table",
+            _captcha: "false"
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && (data.success === "true" || data.success === true)) {
+          // Success State
+          contactSubmitBtn.innerHTML = `<i class="fas fa-check"></i> <span>Đã gửi thành công!</span>`;
+          contactSubmitBtn.style.background = "var(--emerald)";
+          contactSubmitBtn.style.borderColor = "var(--emerald)";
+
+          if (contactFormStatus) {
+            contactFormStatus.className = "form-status-msg success";
+            contactFormStatus.innerHTML = `<i class="fas fa-check-circle"></i> <div><strong>Tin nhắn đã được gửi thành công!</strong> Cảm ơn bạn đã liên hệ. Thông tin đã được gửi trực tiếp đến hộp thư <strong>777thanhphong@gmail.com</strong>. Tôi sẽ phản hồi trong thời gian sớm nhất.</div>`;
+            contactFormStatus.style.display = "flex";
+          }
+
+          contactForm.reset();
+
+          setTimeout(() => {
+            contactSubmitBtn.disabled = false;
+            contactSubmitBtn.innerHTML = originalBtnHtml;
+            contactSubmitBtn.style.background = "";
+            contactSubmitBtn.style.borderColor = "";
+          }, 4500);
+        } else {
+          throw new Error(data.message || "Gửi không thành công");
+        }
+      } catch (err) {
+        console.error("Form submission error:", err);
+        contactSubmitBtn.disabled = false;
+        contactSubmitBtn.innerHTML = originalBtnHtml;
+
+        if (contactFormStatus) {
+          contactFormStatus.className = "form-status-msg error";
+          const mailtoFallback = `mailto:777thanhphong@gmail.com?subject=${encodeURIComponent(`[Portfolio] Liên hệ từ ${name}`)}&body=${encodeURIComponent(`Họ tên: ${name}\nEmail: ${email}\n\nNội dung:\n${message}`)}`;
+          contactFormStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <div><strong>Không thể gửi tự động!</strong> Vui lòng kiểm tra lại kết nối mạng hoặc <a href="${mailtoFallback}" target="_blank">bấm vào đây để gửi trực tiếp qua Email</a> đến <strong>777thanhphong@gmail.com</strong>.</div>`;
+          contactFormStatus.style.display = "flex";
+        }
+      }
+    });
+  }
+
   /* ── 9. FAQ Accordion ── */
   document.querySelectorAll(".faq-question").forEach((btn) => {
     btn.addEventListener("click", () => {

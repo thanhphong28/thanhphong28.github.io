@@ -558,22 +558,31 @@
               style="font-size: 20px; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
               <i class="far fa-paper-plane" style="color: var(--pop);"></i> Gửi Tin Nhắn
             </h3>
-            <form id="contactForm" action="https://formspree.io/f/placeholder" method="POST">
+            <form id="contactForm" action="https://formsubmit.co/777thanhphong@gmail.com" method="POST">
+              <!-- FormSubmit Configuration -->
+              <input type="hidden" name="_captcha" value="false">
+              <input type="hidden" name="_template" value="table">
+              <input type="hidden" name="_subject" value="[Portfolio] Tin nhắn liên hệ mới">
+              
               <div class="form-group-bento">
                 <label for="contactName">HỌ VÀ TÊN</label>
-                <input type="text" id="contactName" name="name" placeholder="Nguyễn Văn A" required>
+                <input type="text" id="contactName" name="name" placeholder="Nguyễn Văn A" required autocomplete="name">
               </div>
               <div class="form-group-bento">
                 <label for="contactEmail">ĐỊA CHỈ EMAIL</label>
-                <input type="email" id="contactEmail" name="email" placeholder="example@domain.com" required>
+                <input type="email" id="contactEmail" name="email" placeholder="example@domain.com" required autocomplete="email">
               </div>
               <div class="form-group-bento">
                 <label for="contactMessage">NỘI DUNG TRAO ĐỔI</label>
                 <textarea id="contactMessage" name="message" rows="4"
                   placeholder="Bạn muốn thảo luận về dự án hay cơ hội nghề nghiệp nào?" required></textarea>
               </div>
-              <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;">
-                <i class="fas fa-paper-plane"></i> Gửi Tin Nhắn Trực Tiếp
+
+              <!-- Status Feedback Message -->
+              <div id="contactFormStatus" class="form-status-msg" style="display: none;" role="alert"></div>
+
+              <button type="submit" id="contactSubmitBtn" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;">
+                <i class="fas fa-paper-plane"></i> <span>Gửi Tin Nhắn Trực Tiếp</span>
               </button>
             </form>
           </div>

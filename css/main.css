@@ -1448,6 +1448,70 @@ section[id] {
   box-shadow: 0 0 0 3px var(--pop-glow);
 }
 
+/* Contact Form Status Message */
+.form-status-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  line-height: 1.5;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  animation: formStatusFadeIn 0.35s var(--ease-smooth);
+}
+
+@keyframes formStatusFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-status-msg.success {
+  background: var(--emerald-soft);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #065f46;
+}
+
+.form-status-msg.success i {
+  color: var(--emerald);
+  font-size: 17px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.form-status-msg.error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #991b1b;
+}
+
+.form-status-msg.error i {
+  color: #ef4444;
+  font-size: 17px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.form-status-msg a {
+  text-decoration: underline;
+  color: inherit;
+  font-weight: 600;
+}
+
+.btn-primary:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 /* FAQ */
 .faq-wrap {
   margin-top: 40px;
