@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const heroSpline = document.getElementById("heroSpline");
   let preloaderDismissed = false;
   const startTime = Date.now();
-  const MIN_DISPLAY_TIME = isLowSpec ? 1000 : 1800; // Faster unlock for low-spec devices
+  const MIN_DISPLAY_TIME = isLowSpec ? 600 : 1100; // Ultra-snappy loading for world-class speed
 
   const dismissPreloader = () => {
     if (preloaderDismissed) return;
@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (preloader.parentNode) {
             preloader.remove();
           }
-        }, 800);
+        }, 700);
       }
     }, remainingTime);
   };
@@ -56,44 +56,75 @@ document.addEventListener("DOMContentLoaded", () => {
     heroSpline.addEventListener("load-complete", dismissPreloader);
   }
 
-  // Fallback timer: guarantees page smoothly unlocks after max 2.8s
-  setTimeout(dismissPreloader, isLowSpec ? 1500 : 2800);
+  // Fallback timer: guarantees page smoothly unlocks after max 1.8s
+  setTimeout(dismissPreloader, isLowSpec ? 1000 : 1800);
 
-  /* ── 0.2 Spline 3D Mouse Tracking Bridge (Throttled & Low-Spec Guarded) ── */
+  /* ── 0.2 Universal Spline 3D Robot Cursor-Tracking Engine ── */
+  /* Ensures robot looks at the cursor everywhere: across text, profile cards, buttons, etc. */
   if (heroSpline && !isLowSpec) {
-    let mouseThrottle = false;
-    let lastX = 0;
-    let lastY = 0;
+    let ticking = false;
+    let cachedCanvas = null;
 
-    window.addEventListener("mousemove", (e) => {
-      const dx = Math.abs(e.clientX - lastX);
-      const dy = Math.abs(e.clientY - lastY);
-      if (dx < 4 && dy < 4) return;
+    const getTargetCanvas = () => {
+      if (cachedCanvas && cachedCanvas.isConnected) return cachedCanvas;
+      if (heroSpline.shadowRoot) {
+        cachedCanvas = heroSpline.shadowRoot.querySelector("canvas");
+      }
+      return cachedCanvas;
+    };
 
-      lastX = e.clientX;
-      lastY = e.clientY;
-
-      if (mouseThrottle) return;
-      mouseThrottle = true;
+    const forwardCursor = (e) => {
+      if (ticking) return;
+      ticking = true;
 
       requestAnimationFrame(() => {
         try {
-          const shadowCanvas = heroSpline.shadowRoot ? heroSpline.shadowRoot.querySelector("canvas") : null;
-          if (shadowCanvas && e.target !== shadowCanvas) {
-            const ev = new MouseEvent("mousemove", {
+          const canvas = getTargetCanvas();
+          if (canvas && e.target !== canvas) {
+            // PointerEvent for Spline runtime (@splinetool/runtime / @splinetool/viewer v1.12+)
+            const pointerProps = {
               clientX: e.clientX,
               clientY: e.clientY,
               screenX: e.screenX,
               screenY: e.screenY,
+              pageX: e.pageX,
+              pageY: e.pageY,
+              pointerId: e.pointerId || 1,
+              pointerType: e.pointerType || "mouse",
+              isPrimary: true,
+              pressure: e.pressure || 0,
+              width: 1,
+              height: 1,
               bubbles: true,
-              cancelable: true
+              cancelable: true,
+              composed: true
+            };
+
+            const pEvent = new PointerEvent("pointermove", pointerProps);
+            canvas.dispatchEvent(pEvent);
+            heroSpline.dispatchEvent(new PointerEvent("pointermove", pointerProps));
+
+            // MouseEvent for standard Three.js canvas mouse listeners
+            const mEvent = new MouseEvent("mousemove", {
+              clientX: e.clientX,
+              clientY: e.clientY,
+              screenX: e.screenX,
+              screenY: e.screenY,
+              pageX: e.pageX,
+              pageY: e.pageY,
+              bubbles: true,
+              cancelable: true,
+              composed: true
             });
-            shadowCanvas.dispatchEvent(ev);
+            canvas.dispatchEvent(mEvent);
           }
         } catch (_) {}
-        mouseThrottle = false;
+        ticking = false;
       });
-    }, { passive: true });
+    };
+
+    window.addEventListener("pointermove", forwardCursor, { passive: true });
+    window.addEventListener("mousemove", forwardCursor, { passive: true });
   }
 
   /* ── 1. Navbar & Mobile Menu ── */
