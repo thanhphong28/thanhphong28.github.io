@@ -318,18 +318,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (contactFormStatus) {
             contactFormStatus.className = "form-status-msg success";
-            contactFormStatus.innerHTML = `<i class="fas fa-check-circle"></i> <div><strong>Tin nhắn đã được gửi thành công!</strong> Cảm ơn bạn đã liên hệ. Thông tin đã được gửi trực tiếp đến hộp thư <strong>777thanhphong@gmail.com</strong>. Tôi sẽ phản hồi trong thời gian sớm nhất.</div>`;
+            contactFormStatus.innerHTML = `<i class="fas fa-check-circle"></i> <div><strong>Đã gửi tin về email gửi Phong, hãy chờ phản hồi!</strong> Trang sẽ tự động quay về trang chủ sau giây lát...</div>`;
             contactFormStatus.style.display = "flex";
           }
 
           contactForm.reset();
 
+          // Auto-scroll back to Home / Top after 2.2 seconds
           setTimeout(() => {
-            contactSubmitBtn.disabled = false;
-            contactSubmitBtn.innerHTML = originalBtnHtml;
-            contactSubmitBtn.style.background = "";
-            contactSubmitBtn.style.borderColor = "";
-          }, 4500);
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth"
+            });
+            if (history.pushState) {
+              history.pushState(null, null, "#home");
+            }
+
+            setTimeout(() => {
+              contactSubmitBtn.disabled = false;
+              contactSubmitBtn.innerHTML = originalBtnHtml;
+              contactSubmitBtn.style.background = "";
+              contactSubmitBtn.style.borderColor = "";
+              if (contactFormStatus) {
+                contactFormStatus.style.display = "none";
+              }
+            }, 1200);
+          }, 2200);
         } else {
           throw new Error(data.message || "Gửi không thành công");
         }
